@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Task Manager</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tasks.html">Tasks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="teams.html">Teams</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="task-card">
+            <h2>Task Details</h2>
+            <div id="taskDetails">
+                <!-- Task details will be dynamically loaded here -->
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="task-card">
+                <h4 class="card-title">Attachments</h4>
+                <div id="attachmentsSection" class="mb-4">
+                    <!-- Attachments will be dynamically loaded here -->
+                </div>
+                <form id="attachmentForm" enctype="multipart/form-data">
+                    <input type="hidden" id="taskIdForAttachment" name="taskId" value="">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" id="newAttachment">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="uploadAttachmentBtn">Upload Attachment</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="task-card">
+                <h4 class="card-title">Comments</h4>
+                <div id="commentsSection" class="mb-4">
+                    <!-- Comments will be dynamically loaded here -->
+                </div>
+                <form id="commentForm">
+                    <input type="hidden" id="taskIdForComment" name="taskId" value="">
+                    <div class="form-group">
+                        <textarea class="form-control" id="newComment" rows="3" placeholder="Add a comment..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="/js/taskDetail.js"></script>
+</body>
+</html>

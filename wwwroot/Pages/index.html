@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="index.html">Task Manager</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" id="dashboard-link">
+                    <a class="nav-link" href="Dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item" id="tasks-link">
+                    <a class="nav-link" href="tasks.html">Tasks</a>
+                </li>
+                <li class="nav-item" id="teams-link">
+                    <a class="nav-link" href="#">Teams</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" id="login-link">
+                    <a class="nav-link" href="login.html">Login</a>
+                </li>
+                <li class="nav-item d-none" id="logout-link">
+                    <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="center-buttons">
+        <button id="show-login" class="toggle-button active">Login</button>
+        <button id="show-register" class="toggle-button inactive">Register</button>
+    </div>
+
+    <!-- نموذج تسجيل الدخول -->
+    <div id="login-form-container" class="form-container">
+        <div class="card mt-3">
+            <div class="card-header">
+                Login
+            </div>
+            <div class="card-body">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email-login">Email</label>
+                        <input type="email" class="form-control" id="email-login" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password-login">Password</label>
+                        <input type="password" class="form-control" id="password-login" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج التسجيل -->
+    <div id="register-form-container" class="form-container">
+        <div class="card mt-3">
+            <div class="card-header">
+                Register
+            </div>
+            <div class="card-body">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-register">Email</label>
+                        <input type="email" class="form-control" id="email-register" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password-register">Password</label>
+                        <input type="password" class="form-control" id="password-register" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center text-lg-start mt-4">
+        <div class="text-center p-3">
+            © 2024 Task Management System:
+            <a class="text-dark" href="#">Privacy Policy</a> |
+            <a class="text-dark" href="#">Terms of Use</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>

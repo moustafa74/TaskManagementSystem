@@ -1,0 +1,71 @@
+﻿body {
+    font-family: Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+.task-card {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.task-card h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.task-card p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+.task-card p strong {
+    display: inline-block;
+    width: 120px;
+}
+.toggle-button {
+    width: 150px;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    border-radius: 30px;
+    margin: 0 10px;
+    background-color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .toggle-button.active {
+        background-color: #007bff;
+        color: white;
+    }
+/* إخفاء النماذج في البداية */
+#register-form-container,
+#login-form-container {
+    display: none;
+}
+/* محاذاة الحاوية في المنتصف */
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+.center-buttons {
+    text-align: center;
+    margin-bottom: 30px;
+}
