@@ -36,7 +36,7 @@ namespace TaskManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] TaskDto task)
         {
-            TaskEntity tt = new TaskEntity { Title = "test", Description = "fds", Priority = Models.PriorityLevel.High, Status = Models.TaskStatus.Completed };
+            //TaskEntity tt = new TaskEntity { Title = "test", Description = "fds", Priority = Models.PriorityLevel.High, Status = Models.TaskStatus.Completed };
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
