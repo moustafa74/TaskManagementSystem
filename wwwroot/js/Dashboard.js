@@ -1,35 +1,53 @@
 $(document).ready(function () {
-    // URL to fetch tasks data
-    const tasksApiUrl = '/api/Task';
+    function isTokenExpired(token) {
+        if (!token) return true;
 
+        // Decode the token payload 
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        console.log(payload);
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        console.log(currentTime);
+        return payload.exp < currentTime;
+    }
+    if (isTokenExpired(localStorage.getItem('authToken'))) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('UserID');
+    }
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        window.location.href = 'index.html';
+    }
+    const userId = localStorage.getItem('UserID');
     // Fetch data from API and update the dashboard
     $.ajax({
-        url: tasksApiUrl,
+        url: `/api/Task/user/${userId}`,
         method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
         success: function (data) {
-            // Update the statistics
+            console.log(data); 
             updateStatistics(data);
-
-            // Generate chart data and render the chart
             generateChart(data);
         },
         error: function (error) {
-            console.error('Error fetching tasks:', error);
-            alert('An error occurred while fetching tasks. Please try again later.');
+            console.error('Error fetching dashboard data:', error);
         }
     });
 
     // Function to update statistics
     function updateStatistics(tasks) {
         const totalTasks = tasks.length;
-        const completedTasks = tasks.filter(task => task.status === 'Completed').length;
-        const inProgressTasks = tasks.filter(task => task.status === 'In Progress').length;
-        const overdueTasks = tasks.filter(task => moment(task.dueDate).isBefore(moment()) && task.status !== 'Completed').length;
+        const completedTasks = tasks.filter(task => task.status === 2).length;
+        const inProgressTasks = tasks.filter(task => task.status === 1).length;
+        const overdueTasks = tasks.filter(task => moment(task.dueDate).isBefore(moment()) && task.status !== 2).length;
+        const todoTasks = tasks.filter(task => task.status === 0).length;
 
         $('#totalTasks').text(totalTasks);
         $('#completedTasks').text(completedTasks);
         $('#inProgressTasks').text(inProgressTasks);
         $('#overdueTasks').text(overdueTasks);
+        $('#ToDOTasks').text(todoTasks); 
     }
 
     // Function to generate chart data and render the chart
@@ -39,16 +57,16 @@ $(document).ready(function () {
 
         tasks.forEach(task => {
             switch (task.priority) {
-                case 'Low':
+                case 0:
                     prioritiesCount[0]++;
                     break;
-                case 'Medium':
+                case 1:
                     prioritiesCount[1]++;
                     break;
-                case 'High':
+                case 2:
                     prioritiesCount[2]++;
                     break;
-                case 'Critical':
+                case 3:
                     prioritiesCount[3]++;
                     break;
             }

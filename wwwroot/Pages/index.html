@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Management System</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand" href="index.html">Task Manager</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="index.html">Task Management System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -28,80 +29,97 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item" id="login-link">
-                    <a class="nav-link" href="login.html">Login</a>
+                    <a class="nav-link" href="index.html">Login</a>
                 </li>
-                <li class="nav-item d-none" id="logout-link">
-                    <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                <li class="nav-item" id="logout-link">
+                    <a class="nav-link" href="index.html" id="logout-link">Logout</a>
                 </li>
             </ul>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="center-buttons">
-        <button id="show-login" class="toggle-button active">Login</button>
-        <button id="show-register" class="toggle-button inactive">Register</button>
-    </div>
+    <div class="container" id="auth-form">
+        <div class="center-buttons mt-5">
+            <button id="show-login" class="toggle-button active">Login</button>
+            <button id="show-register" class="toggle-button">Register</button>
+        </div>
 
-    <!-- نموذج تسجيل الدخول -->
-    <div id="login-form-container" class="form-container">
-        <div class="card mt-3">
-            <div class="card-header">
-                Login
+        <!-- Login Form -->
+        <div id="login-form-container" class="form-container">
+            <div class="card mt-3">
+                <div class="card-header text-center">
+                    Login
+                </div>
+                <div class="card-body">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email-login">Email</label>
+                            <input type="email" class="form-control" id="email-login" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password-login">Password</label>
+                            <input type="password" class="form-control" id="password-login" required>
+                        </div>
+                        <span id="error-message" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    <p class="text-center mt-2">
+                        <a href="Recovery.html" id="forgot-password-link" class="forgot-password-link">Forgot Password?</a>
+                    </p>
+                </div>
             </div>
-            <div class="card-body">
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="email-login">Email</label>
-                        <input type="email" class="form-control" id="email-login" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password-login">Password</label>
-                        <input type="password" class="form-control" id="password-login" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
-                </form>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form-container" class="form-container">
+            <div class="card mt-3">
+                <div class="card-header text-center">
+                    Register
+                </div>
+                <div class="card-body">
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="FullName">Full Name</label>
+                            <input type="text" class="form-control" id="FullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email-register">Email</label>
+                            <input type="email" class="form-control" id="email-register" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password-register">Password</label>
+                            <input type="password" class="form-control" id="password-register" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                        <span id="error-messagereg" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- نموذج التسجيل -->
-    <div id="register-form-container" class="form-container">
-        <div class="card mt-3">
-            <div class="card-header">
-                Register
-            </div>
-            <div class="card-body">
-                <form id="register-form">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email-register">Email</label>
-                        <input type="email" class="form-control" id="email-register" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password-register">Password</label>
-                        <input type="password" class="form-control" id="password-register" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Register</button>
-                </form>
-            </div>
-        </div>
+    <div id="success-message-register" class="success-message" style="display:none;">
+        <h3>Registration successful!</h3>
+        <p>Please check your email to confirm your account.</p>
+        <a id="go-to-login" class="btn btn-success" href="index.html">Go to Login</a>
+    </div>
+    <div id="success-message" class="success-message" style="display:none;">
+        <h3>Welcome, you have successfully logged in!</h3>
+        <p>We are happy to see you here.</p>
+        <a id="go-to-dashboard" class="btn btn-success" href="tasks.html">Go to Tasks</a>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-light text-center text-lg-start mt-4">
-        <div class="text-center p-3">
-            © 2024 Task Management System:
-            <a class="text-dark" href="#">Privacy Policy</a> |
-            <a class="text-dark" href="#">Terms of Use</a>
-        </div>
+    <footer class="bg-dark text-white text-center p-3 mt-4">
+        <p>&copy; 2024 Task Management System. All rights reserved.</p>
+        <a href="#" class="text-white">Privacy Policy</a> |
+        <a href="#" class="text-white">Terms of Service</a> |
+        <a href="#" class="text-white">Contact Us</a>
     </footer>
 
     <!-- Scripts -->

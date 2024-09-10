@@ -35,5 +35,9 @@ namespace TaskManagementSystem.DAL.Repositories
         {
             return await _dbSet.Where(t => t.Priority == priority).ToListAsync();
         }
+        public async Task AddTaskAssignmentAsync(TaskAssignment taskAssignment)
+        {
+            await _context.TaskAssignments.AddAsync(taskAssignment);
+        }
     }
 }

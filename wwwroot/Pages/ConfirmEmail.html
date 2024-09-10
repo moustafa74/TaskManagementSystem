@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="index.html">Task Management System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" id="dashboard-link">
+                    <a class="nav-link" href="Dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item" id="tasks-link">
+                    <a class="nav-link" href="tasks.html">Tasks</a>
+                </li>
+                <li class="nav-item" id="teams-link">
+                    <a class="nav-link" href="#">Teams</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" id="login-link">
+                    <a class="nav-link" href="index.html">Login</a>
+                </li>
+                <li class="nav-item" id="logout-link">
+                    <a class="nav-link" href="index.html" id="logout-link">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <h1>Confirming Your Email...</h1>
+    <p id="message">Please wait...</p>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center p-3 mt-4">
+        <p>&copy; 2024 Task Management System. All rights reserved.</p>
+        <a href="#" class="text-white">Privacy Policy</a> |
+        <a href="#" class="text-white">Terms of Service</a> |
+        <a href="#" class="text-white">Contact Us</a>
+    </footer>
+    <script>
+        $(document).ready(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            const token = urlParams.get('token');
+
+            $.ajax({
+                url: '/api/Register',
+                method: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify({ userId: userId, token: token }),
+                success: function (response) {
+                    $('#message').text('Your email has been confirmed successfully. You can now log in.');
+                },
+                error: function (error) {
+                    $('#message').text('There was an error confirming your email. Please try again.');
+                }
+            });
+        });
+    </script>
+    <script src="/js/script.js"></script>
+</body>
+</html>

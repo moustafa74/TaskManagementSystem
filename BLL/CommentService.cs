@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.DAL.Repositories;
 using TaskManagementSystem.Models;
 
@@ -17,7 +18,7 @@ namespace TaskManagementSystem.BLL
         {
             return await _commentRepository.GetAllAsync(
                 comment => comment.TaskEntityId == taskId,
-                query => query.Include(comment => comment.User) // تضمين بيانات User المرتبطة بالتعليق
+                query => query.Include(comment => comment.User) 
             );
         }
         public async Task<Comment> GetCommentByIdAsync(int commentId)
@@ -26,6 +27,11 @@ namespace TaskManagementSystem.BLL
         }
         public async Task AddCommentAsync(Comment comment)
         {
+            //UserManager<ApplicationUser> user = _commentRepository.GetByIdAsync(comment.UserId);
+            //if (IsUserCommentOwnerAsync(user.id, comment.Id)) ;
+            //{
+            //    return "Access Denied";
+            //}
             await _commentRepository.AddAsync(comment);
             await _commentRepository.SaveAsync();
         }
@@ -35,7 +41,7 @@ namespace TaskManagementSystem.BLL
             var comment = await _commentRepository.GetByIdAsync(id);
             if (comment != null)
             {
-                _commentRepository.Delete(comment);
+                await _commentRepository.DeleteAsync(comment);
                 await _commentRepository.SaveAsync();
             }
         }

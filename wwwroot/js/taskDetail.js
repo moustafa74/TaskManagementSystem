@@ -1,17 +1,33 @@
 $(document).ready(function () {
+    function isTokenExpired(token) {
+        if (!token) return true;
+
+        // Decode the token payload 
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        console.log(payload);
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        console.log(currentTime);
+        return payload.exp < currentTime;
+    }
+    if (isTokenExpired(localStorage.getItem('authToken'))) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('UserID');
+    }
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        window.location.href = 'index.html';
+    }
     const urlParams = new URLSearchParams(window.location.search);
     const taskId = urlParams.get('id');
-    const userRole = 'member'; // افترض أن هذا هو الدور الحالي للمستخدم
 
-    // تعيين taskId في الحقول المخفية
     $('#taskIdForAttachment').val(taskId);
     $('#taskIdForComment').val(taskId);
 
-    // تعطيل زر رفع المرفقات إذا لم يكن المستخدم صاحب المهمة أو قائد الفريق أو المشرف
-    if (userRole !== 'owner' && userRole !== 'teamLeader' && userRole !== 'admin') {
-        $('#uploadAttachmentBtn').prop('disabled', true);
-        $('#newAttachment').prop('disabled', true);
-    }
+
+    //if (userRole !== 'owner' && userRole !== 'teamLeader' && userRole !== 'admin') {
+    //    $('#uploadAttachmentBtn').prop('disabled', true);
+    //    $('#newAttachment').prop('disabled', true);
+    //}
 
     if (taskId) {
         $.ajax({
@@ -83,14 +99,15 @@ $(document).ready(function () {
             url: `/api/comment/${taskId}`,
             method: 'GET',
             success: function (comments) {
+                $('#commentsSection').empty(); // Clear previous comments
                 if (comments.length > 0) {
                     comments.forEach(comment => {
                         $('#commentsSection').append(`
-                            <div class="comment">
-                                <p><strong>${comment.user.userName}</strong> <span class="text-muted">(${moment(comment.createdAt).format('MMMM Do YYYY, h:mm a')})</span>: ${comment.content}</p>
-                            </div>
-                            <hr>
-                        `);
+                        <div class="comment">
+                            <p><strong>${comment.user.userName}</strong> <small>(${moment(comment.createdAt).format('MMMM Do YYYY, h:mm a')})</small></p>
+                            <p>${comment.content}</p>
+                        </div>
+                    `);
                     });
                 } else {
                     $('#commentsSection').append('<p>No comments found.</p>');
@@ -105,16 +122,18 @@ $(document).ready(function () {
     // Fetch attachments
     function fetchAttachments(taskId) {
         $.ajax({
-            url: `/api/attachments`,
+            url: `/api/attachments/${taskId}`,
             method: 'GET',
             success: function (attachments) {
+                $('#attachmentsSection').empty(); // Clear previous attachments
                 if (attachments.length > 0) {
                     attachments.forEach(attachment => {
                         $('#attachmentsSection').append(`
-                            <div class="attachment">
-                                <p><a href="${attachment.filePath}" target="_blank">${attachment.fileName}</a> - Uploaded by ${attachment.uploadedBy.userName}</p>
-                            </div>
-                        `);
+                        <div class="attachment">
+                            <a href="${attachment.filePath}" target="_blank">${attachment.fileName}</a>
+                            <small>Uploaded by: ${attachment.uploadedBy.userName} on ${moment(attachment.uploadedAt).format('MMMM Do YYYY, h:mm a')}</small>
+                        </div>
+                    `);
                     });
                 } else {
                     $('#attachmentsSection').append('<p>No attachments found.</p>');
@@ -177,5 +196,19 @@ $(document).ready(function () {
         } else {
             alert('Please select a file before submitting.');
         }
+    });
+    // Logout function
+    $('#logout-link').click(function (event) {
+        event.preventDefault(); // Prevent the immediate navigation
+
+        // Remove token from localStorage
+        localStorage.removeItem('authToken');
+
+        // Hide and show relevant links after logging out
+        $('#dashboard-link, #tasks-link, #teams-link, #logout-link').hide();
+        $('#login-link').show();
+
+        // Redirect to login page after logout
+        window.location.href = 'index.html';
     });
 });

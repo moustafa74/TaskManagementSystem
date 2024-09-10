@@ -1,227 +1,234 @@
 ﻿$(document).ready(function () {
-    // Simulate authentication status
-    let isAuthenticated = true; // Replace this with real authentication check
+    // Initially show the login form and hide the register form
+    $('#login-form-container').show();
+    $('#register-form-container').hide();
+    $('#success-message-register').hide();
+    $('#success-message').hide();
 
-    // Toggle visibility based on authentication status
-    if (!isAuthenticated) {
+    // Function to check if the token is expired
+    function isTokenExpired(token) {
+        if (!token) return true; 
+
+        // Decode the token payload 
+        const payload = JSON.parse(atob(token.split('.')[1])); 
+        console.log(payload);
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        console.log(currentTime);
+        return payload.exp < currentTime;
+    }
+
+    // Check if the user is logged in by checking the token
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (!token || isTokenExpired(token)) {
         $('#dashboard-link, #tasks-link, #teams-link, #logout-link').hide();
         $('#login-link').show();
+        $('#success-message').hide();
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('UserID');
     } else {
         $('#dashboard-link, #tasks-link, #teams-link, #logout-link').show();
         $('#login-link').hide();
+        $('#auth-form').hide();
+        $('#success-message').show();
     }
 
-    // Show loading spinner
-    $('#loading').show();
-
-    // Fetch tasks from the server
-    $.ajax({
-        url: '/api/Task',
-        method: 'GET',
-        success: function (data) {
-            $('#loading').hide(); // Hide loading spinner after fetching data
-
-            if (data.length === 0) {
-                $('#taskTableBody').append(`
-                    <tr>
-                        <td colspan="6" class="text-center"><span>No Tasks found</span></td>
-                    </tr>`
-                );
-            } else {
-                data.forEach(task => {
-                    const formattedDate = moment(task.dueDate).format('MMMM Do YYYY');
-                    const statusBadge = getStatusBadge(task.status);
-
-                    const priorityText = getPriority(task.priority);
-
-                    $('#taskTableBody').append(`
-                        <tr data-id="${task.id}">
-                            <td>${task.title}</td>
-                            <td>${task.description}</td>
-                            <td>${formattedDate}</td>
-                            <td>${priorityText}</td>
-                            <td>${statusBadge}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary edit-task-btn">Edit</button>
-                                <button class="btn btn-sm btn-danger delete-task-btn">Delete</button>
-                                <a href="taskDetail.html?id=${task.id}" class="btn btn-sm btn-info">View Details</a>
-                            </td>
-                        </tr>
-                    `);
-                });
-            }
-        },
-        error: function (error) {
-            $('#loading').hide(); // Hide loading spinner on error
-            console.error('Error fetching tasks:', error);
-            alert('An error occurred while fetching tasks. Please try again later.');
-        }
+    $('#show-login').click(function () {
+        $('#login-form-container').show();
+        $('#register-form-container').hide();
+        $('#show-login').addClass('active');
+        $('#show-register').removeClass('active');
     });
 
-    // Function to return status badge based on task status
-    function getStatusBadge(status) {
-        switch (status) {
-            case 0:
-                return '<span class="badge badge-secondary">ToDo</span>';
-            case 1:
-                return '<span class="badge badge-warning">InProgress</span>';
-            case 2:
-                return '<span class="badge badge-success">Completed</span>';
-            case 3:
-                return '<span class="badge badge-danger">Blocked</span>';
-            default:
-                return '<span class="badge badge-light">Unknown</span>';
-        }
-    }
+    $('#show-register').click(function () {
+        $('#login-form-container').hide();
+        $('#register-form-container').show();
+        $('#show-login').removeClass('active');
+        $('#show-register').addClass('active');
+    });
 
-    // Function to return priority text based on priority number
-    function getPriority(priority) {
-        switch (priority) {
-            case 0:
-                return '<span class="badge badge-success">Low</span>';
-            case 1:
-                return '<span class="badge badge-warning">Medium</span>';
-            case 2:
-                return '<span class="badge badge-danger">High</span>';
-            case 3:
-                return '<span class="badge badge-warning">Critical</span>';
-            default:
-                return '<span class="badge badge-light">Unknown</span>';
-        }
-    }
-    function getStatusNumber(statusText) {
-        switch (statusText) {
-            case 'ToDo':
-                return 0;
-            case 'InProgress':
-                return 1;
-            case 'Completed':
-                return 2;
-            case 'Blocked':
-                return 3;
-            default:
-                return -1; // Unknown or invalid status
-        }
-    }
-
-    function getPriorityNumber(priorityText) {
-        switch (priorityText) {
-            case 'Low':
-                return 0;
-            case 'Medium':
-                return 1;
-            case 'High':
-                return 2;
-            case 'Critical':
-                return 3;
-            default:
-                return -1; // Unknown or invalid priority
-        }
-    }
-
-    // Handle form submission for adding or editing tasks
-    $('#taskForm').on('submit', function (event) {
+    // Handle login form submission
+    $('#login-form').submit(function (event) {
         event.preventDefault();
-        const taskId = $('#taskId').val(); // Get the task ID from the hidden input
-        const title = $('#taskTitle').val().trim();
-        const description = $('#taskDescription').val().trim();
-        const dueDate = $('#taskDueDate').val();
-        const priority = $('#taskPriority').val();
-        const status = $('#taskStatus').val();
+        const email = $('#email-login').val();
+        const password = $('#password-login').val();
 
-        if (title === '' || dueDate === '' || priority === '' || status === '') {
-            $('#error-message').text('Please fill out all required fields.').show();
-            return;
-        }
-        const prioriity = getPriorityNumber(priority);
-        const statuus = getStatusNumber(status);
-        // Determine if this is an add or edit operation
-        const isEdit = taskId ? true : false;
-        const requestUrl = isEdit ? `/api/Task/${taskId}` : '/api/Task';
-        const requestMethod = isEdit ? 'PUT' : 'POST';
-
-        const taskData = {
-            title: title,
-            description: description,
-            dueDate: dueDate,
-            priority: prioriity,
-            status: statuus
-        };
-        if (isEdit) {
-            taskData.id = taskId;
-        }
-
-        // Perform AJAX request to send data to the server
         $.ajax({
-            url: requestUrl,
-            method: requestMethod,
-            data: JSON.stringify(taskData),
+            url: '/api/login',
+            method: 'POST',
             contentType: 'application/json',
-            success: function () {
-                alert(taskId ? 'Task updated successfully' : 'Task added successfully');
-                location.reload(); // Refresh the page to see the new or updated task
+            data: JSON.stringify({ UserName: email, Password: password }),
+            success: function (response) {
+                    localStorage.setItem('authToken', response.token);
+                    localStorage.setItem('UserID', response.user_ID);
+                    $('#dashboard-link, #tasks-link, #teams-link, #logout-link').show();
+                    $('#login-link').hide();
+                    $('#auth-form').hide();
+                    $('#success-message').show();
+                    //$('#login-link').hide();
+                    //window.location.href = 'tasks.html'; // Redirect to task page after login
             },
             error: function (error) {
-                console.error(`Error ${taskId ? 'updating' : 'adding'} task:`, error);
-                $('#error-message').text(`An error occurred while ${taskId ? 'updating' : 'adding'} the task. Please try again later.`).show();
+                const errors = error.responseJSON.error;
+
+                let errorMessage = '';
+
+                if (errors && Array.isArray(errors)) {
+                    errors.forEach((err) => {
+                        errorMessage += `${err} `;
+                    });
+                } else {
+                    errorMessage = 'Error registering user. Please try again.';
+                }
+
+                $('#error-message').html(errorMessage);
             }
         });
     });
 
-    // Open modal for editing a task
-    $(document).on('click', '.edit-task-btn', function () {
-        const taskRow = $(this).closest('tr');
-        const taskId = taskRow.data('id');
+    // Handle register form submission
+    $('#register-form').submit(function (event) {
+        event.preventDefault();
+        const FullName = $('#FullName').val();
+        const email = $('#email-register').val();
+        const password = $('#password-register').val();
+        const confirmPassword = $('#confirmPassword').val();
 
-        // Populate the form with the existing task data
-        $('#taskId').val(taskId); // Store the task ID in the hidden input
-        $('#taskTitle').val(taskRow.find('td').eq(0).text());
-        $('#taskDescription').val(taskRow.find('td').eq(1).text());
-        $('#taskDueDate').val(moment(taskRow.find('td').eq(2).text(), 'MMMM Do YYYY').format('YYYY-MM-DD'));
-        $('#taskPriority').val(taskRow.find('td').eq(3).text());
-        $('#taskStatus').val(taskRow.find('td').eq(4).text());
-
-        $('#taskForm').data('taskId', taskId); // Store taskId in the form
-        $('#taskModalLabel').text('Edit Task'); // Change the modal title to 'Edit Task'
-        $('#taskModal').modal('show');
-    });
-
-
-    // Handle task deletion
-    $(document).on('click', '.delete-task-btn', function () {
-        const taskRow = $(this).closest('tr');
-        const taskId = taskRow.data('id');
-
-        if (confirm('Are you sure you want to delete this task?')) {
-            $.ajax({
-                url: `/api/Task/${taskId}`,
-                method: 'DELETE',
-                success: function () {
-                    alert('Task deleted successfully');
-                    taskRow.remove(); // Remove the task from the table
-                },
-                error: function (error) {
-                    console.error('Error deleting task:', error);
-                    $('#error-message').text('An error occurred while deleting the task. Please try again later.').show();
-                }
-            });
+        if (password !== confirmPassword) {
+            $('#error-messagereg').text('Passwords do not match!');
+            return;
         }
-    });
 
-    // Clear form fields and reset modal for new task
-    $('#clearForm, #addNewTaskButton').on('click', function () {
-        $('#taskForm').trigger('reset'); // Reset all form fields
-        $('#taskId').val(''); // Clear the hidden task ID
-        $('#error-message').hide(); // Hide any error messages
-        $('#taskModalLabel').text('New Task'); // Change the modal title to 'New Task'
-        $('#taskModal').modal('show'); // Show the modal
-    });
+        $.ajax({
+            url: '/api/Register',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                FullName: FullName,
+                Email: email,
+                Password: password
+            }),
+            success: function (response) {
+                $('#auth-form').hide();
+                $('#success-message-register').show();
 
-    // Search/filter tasks
-    $('#searchInput').on('keyup', function () {
-        const value = $(this).val().toLowerCase();
-        $('#taskTableBody tr').filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                ////$('#go-to-login').click(function () {
+                ////    $('#show-login').click(); 
+                //});
+            },
+            error: function (error) {
+                const errors = error.responseJSON.error; 
+
+                let errorMessage = '';
+
+                if (errors && Array.isArray(errors)) {
+                    errors.forEach((err) => {
+                        errorMessage += `${err} `;
+                    });
+                } else {
+                    errorMessage = 'Error registering user. Please try again.'; 
+                }
+
+                $('#error-messagereg').html(errorMessage);
+            }
         });
     });
+
+
+    // Logout function
+    $('#logout-link').click(function (event) {
+        event.preventDefault(); // Prevent the immediate navigation
+
+        // Remove token from localStorage
+        localStorage.removeItem('authToken');
+
+        // Hide and show relevant links after logging out
+        $('#dashboard-link, #tasks-link, #teams-link, #logout-link').hide();
+        $('#login-link').show();
+
+        // Redirect to login page after logout
+        window.location.href = 'index.html';
+    });
+    // Handle Recovery Form submission on the Recovery page
+    $('#recovery-form').submit(function (event) {
+        event.preventDefault();
+
+        const email = $('#email-recovery').val();
+
+        $.ajax({
+            url: '/api/login/ForgetPassword',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                Email: email,
+            }),
+            success: function (response) {
+                //const user_id = response.user_id;
+                //$('#user_id').val(user_id);
+                $('#error-message-recovery').text('Recovery email has been sent successfully.');
+                $('#error-message-recovery').css('color', 'green');
+            },
+            error: function (error) {
+                const errors = error.responseJSON.error;
+                let errorMessage = '';
+
+                if (errors && Array.isArray(errors)) {
+                    errors.forEach((err) => {
+                        errorMessage += `${err} `;
+                    });
+                } else {
+                    errorMessage = 'An error occurred. Please try again.'; 
+                }
+                $('#error-message-recovery').text(errorMessage);
+                $('#error-message-recovery').css('color', 'red');
+            }
+        });
+    });
+    // Handle Reset Passowrd Form submission on Reset Password Page
+    $('#reset-password-form').submit(function (event) {
+        event.preventDefault();
+
+        const newPassword = $('#newPassword').val();
+        const confirmNewPassword = $('#confirmNewPassword').val();
+        const token = new URLSearchParams(window.location.search).get('token'); 
+        const userId = new URLSearchParams(window.location.search).get('userId');
+
+        if (newPassword !== confirmNewPassword) {
+            $('#error-message-reset').text('Passwords do not match!');
+            $('#error-message-reset').css('color', 'red');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/Login/ResetPassword',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                token: token,
+                NewPassword: newPassword,
+                UserId: userId
+            }),
+            success: function (response) {
+                $('#reset-password-form').hide();
+                $('#success-message-reset').show();
+            },
+            error: function (error) {
+                const errors = error.responseJSON.error;
+
+                let errorMessage = '';
+
+                if (errors && Array.isArray(errors)) {
+                    errors.forEach((err) => {
+                        errorMessage += `${err} `;
+                    });
+                } else {
+                    errorMessage = 'Error resetting password. Please try again.';
+                }
+
+                $('#error-message-reset').html(errorMessage);
+                $('#error-message-reset').css('color', 'red');
+            }
+        });
+    });
+
 });

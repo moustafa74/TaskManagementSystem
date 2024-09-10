@@ -23,7 +23,7 @@ namespace TaskManagementSystem.BLL
         //        return false;
         //    }
 
-        //    // تحقق من أن المستخدم هو TeamLead لفريق مرتبط بالمهمة
+        //    
         //    var isTeamLead = task.TaskAssignments.Any(ta => ta.Team.TeamLeadId == teamLeadId);
         //    return isTeamLead;
         //}
@@ -43,7 +43,7 @@ namespace TaskManagementSystem.BLL
             var attachment = await _attachmentRepository.GetByIdAsync(id);
             if (attachment != null)
             {
-                _attachmentRepository.Delete(attachment);
+                await _attachmentRepository.DeleteAsync(attachment);
                 await _attachmentRepository.SaveAsync();
             }
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using TaskManagementSystem.Api.Data;
 
@@ -19,16 +20,16 @@ namespace TaskManagementSystem.DAL.Repositories
         {
             return await _dbSet.ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllAsync(Func<T, bool> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
-            IQueryable<T> query = _dbSet.Where(predicate).AsQueryable();
+            IQueryable<T> query = _dbSet.Where(predicate); 
 
             if (include != null)
             {
                 query = include(query);
             }
 
-            return await query.ToListAsync();
+            return await query.ToListAsync(); 
         }
         public async Task<T> GetByIdAsync(object id)
         {
@@ -40,21 +41,27 @@ namespace TaskManagementSystem.DAL.Repositories
             await _dbSet.AddAsync(entity);
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
                 _dbSet.Attach(entity);
             }
-            _dbSet.Remove(entity);
-        }
 
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync(); 
+        }
+        public async Task DeleteRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
+        }
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

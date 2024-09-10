@@ -1,0 +1,191 @@
+﻿/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding-top: 70px; /* لتجنب تغطية المحتوى بالـ navbar */
+    padding-bottom: 70px; /* لتجنب تغطية المحتوى بالـ footer */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background-color: #343a40; /* Darker color */
+    padding: 15px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: white !important;
+}
+
+.nav-link {
+    color: #ffffff !important;
+}
+
+/* Task Details */
+.task-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+    .task-card h3 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .task-card p {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+        .task-card p strong {
+            display: inline-block;
+            width: 120px;
+        }
+
+/* Attachments Section */
+#attachmentsSection {
+    margin-top: 20px;
+}
+
+.attachment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+    .attachment a {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: 600;
+    }
+
+    .attachment small {
+        color: #6c757d;
+    }
+
+/* Comments Section */
+.comment {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .comment p {
+        margin-bottom: 5px;
+    }
+
+    .comment strong {
+        color: #343a40;
+        font-weight: bold;
+    }
+
+    .comment small {
+        color: #6c757d;
+    }
+
+/* Form Styling */
+form textarea {
+    resize: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+form button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Footer */
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .task-card h3 {
+        font-size: 20px;
+    }
+
+    .task-card p {
+        font-size: 14px;
+    }
+
+    .attachment, .comment {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .attachment a {
+            font-size: 14px;
+        }
+
+        .comment p {
+            font-size: 14px;
+        }
+}
+
+/* Footer */
+.footer {
+    background-color: #343a40; /* نفس لون الـ navbar */
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* This makes sure the footer stays at the bottom */
+}
+
+    .footer a {
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+        .footer a:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+/* Ensure footer stays visible on smaller screens */
+@media (max-width: 768px) {
+    .footer {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+        .footer ul {
+            padding: 0;
+        }
+
+            .footer ul li {
+                display: block;
+                margin-bottom: 10px;
+            }
+}

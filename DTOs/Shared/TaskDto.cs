@@ -9,4 +9,5 @@ public class TaskDto
     public DateTime DueDate { get; set; }
     public PriorityLevel Priority { get; set; }
     public TaskStatus Status { get; set; }
+    public string CreatedById { get; set; }
 }

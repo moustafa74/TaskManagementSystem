@@ -40,7 +40,7 @@ namespace TaskManagementSystem.Api.Data
 
             // Configuration for TaskAssignment (Composite Key)
             builder.Entity<TaskAssignment>()
-                 .HasKey(ta => new { ta.TaskEntityId, ta.UserId, ta.TeamId });
+                .HasKey(ta => new { ta.TaskEntityId, ta.UserId });
 
             // Configure relationship between TaskAssignment and TaskEntity
             builder.Entity<TaskAssignment>()
@@ -58,10 +58,11 @@ namespace TaskManagementSystem.Api.Data
 
             // Configure relationship between TaskAssignment and Team
             builder.Entity<TaskAssignment>()
-                .HasOne(ta => ta.Team)
-                .WithMany(t => t.TaskAssignments)
-                .HasForeignKey(ta => ta.TeamId)
-                .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(ta => ta.Team)
+            .WithMany(t => t.TaskAssignments)
+            .HasForeignKey(ta => ta.TeamId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
 
             // Configuration for TaskDependency (Composite Key)
             builder.Entity<TaskDependency>()

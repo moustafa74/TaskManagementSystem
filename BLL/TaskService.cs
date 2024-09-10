@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.DAL.Repositories;
 using TaskManagementSystem.Models;
 
@@ -8,16 +9,17 @@ namespace TaskManagementSystem.BLL
     {
         private readonly ITaskRepository _taskRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        string user;
+        private readonly ITeamRepository _teamRepository;
+        private readonly IGenericRepository<TaskAssignment> _taskAssignmentRepository;
 
-
-        public TaskService(ITaskRepository taskRepository, UserManager<ApplicationUser> userManager)
+        public TaskService(ITaskRepository taskRepository, UserManager<ApplicationUser> userRepository, ITeamRepository teamRepository, IGenericRepository<TaskAssignment> taskAssignmentRepository)
         {
             _taskRepository = taskRepository;
-            _userManager = userManager;
-             
+            _userManager = userRepository;
+            _teamRepository = teamRepository;
+            _taskAssignmentRepository = taskAssignmentRepository;   
         }
-        
+
         public async Task<IEnumerable<TaskEntity>> GetAllTasksAsync()
         {
             return await _taskRepository.GetAllAsync();
@@ -30,16 +32,54 @@ namespace TaskManagementSystem.BLL
         //        return false;
         //    }
 
-        //    // تحقق من أن المستخدم هو TeamLead لفريق مرتبط بالمهمة
         //    var isTeamLead = task.TaskAssignments.Any(ta => ta.Team.TeamLeadId == teamLeadId);
         //    return isTeamLead;
         //}
 
-        public async Task<IEnumerable<TaskEntity>> GetTasksByUserIdAsync(string userId)
+        public async Task<IEnumerable<TaskDto>> GetTasksByUserIdAsync(string userId)
         {
-            return await _taskRepository.GetTasksByUserIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Admin"))
+            {
+                var tasks = await GetAllTasksAsync();
+                return tasks.Select(MapToTaskDto);
+            }
+            else if (roles.Contains("TeamLead"))
+            {
+                var teamId = await _teamRepository.GetTeamIdByUserIdAsync(userId);
+                if (teamId.HasValue)
+                {
+                    var tasks = await _taskRepository.GetTasksByTeamIdAsync(teamId.Value);
+                    return tasks.Select(MapToTaskDto);
+                }
+                else
+                {
+                    return Enumerable.Empty<TaskDto>();
+                }
+            }
+            else //Regular User
+            {
+                var tasks = await _taskRepository.GetTasksByUserIdAsync(userId);
+                return tasks.Select(MapToTaskDto);
+            }
         }
 
+        // Convert Task Entity to TaskDto
+        private TaskDto MapToTaskDto(TaskEntity task)
+        {
+            return new TaskDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                DueDate = task.DueDate,
+                Priority = task.Priority,
+                Status = task.Status,
+            };
+        }
         public async Task<IEnumerable<TaskEntity>> GetOpenTasksAsync()
         {
             return await _taskRepository.GetOpenTasksAsync();
@@ -52,18 +92,34 @@ namespace TaskManagementSystem.BLL
 
         public async Task AddTaskAsync(TaskDto task)
         {
-            user = _userManager.Users.FirstOrDefault()?.Id; // مؤقتا 
-            var newtask = new TaskEntity
+            try
             {
-                Title = task.Title,
-                Description = task.Description,
-                DueDate = task.DueDate,
-                Priority = task.Priority,
-                Status = task.Status,
-                CreatedById = user
-            };
-            await _taskRepository.AddAsync(newtask);
-            await _taskRepository.SaveAsync();
+                var newtask = new TaskEntity
+                {
+                    Title = task.Title,
+                    Description = task.Description,
+                    DueDate = task.DueDate,
+                    Priority = task.Priority,
+                    Status = task.Status,
+                    CreatedById = task.CreatedById,
+                };
+                await _taskRepository.AddAsync(newtask);
+                await _taskRepository.SaveAsync();
+                var taskAssignment = new TaskAssignment
+                {
+                    TaskEntityId = newtask.Id,
+                    UserId = newtask.CreatedById,
+                    TeamId = null
+                };
+                await _taskRepository.AddTaskAssignmentAsync(taskAssignment);
+                await _taskRepository.SaveAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         public async Task UpdateTaskAsync(TaskDto task)
@@ -77,7 +133,7 @@ namespace TaskManagementSystem.BLL
                 existingTask.Priority = task.Priority;
                 existingTask.Status = task.Status;
 
-                _taskRepository.Update(existingTask);
+                await _taskRepository.UpdateAsync(existingTask);
                 await _taskRepository.SaveAsync();
             }
         }
@@ -87,8 +143,22 @@ namespace TaskManagementSystem.BLL
             var task = await _taskRepository.GetByIdAsync(id);
             if (task != null)
             {
-                _taskRepository.Delete(task);
-                await _taskRepository.SaveAsync();
+                try
+                {
+                    var taskAssignments = await _taskAssignmentRepository.GetAllAsync(ta => ta.TaskEntityId == task.Id);
+                    if (taskAssignments != null && taskAssignments.Any())
+                    {
+                        _taskAssignmentRepository.DeleteRange(taskAssignments);
+                    }
+
+                    await _taskRepository.DeleteAsync(task);
+                    await _taskRepository.SaveAsync();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }          
             }
         }
 

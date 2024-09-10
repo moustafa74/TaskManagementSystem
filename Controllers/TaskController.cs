@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.BLL;
 using TaskManagementSystem.Models;
 
@@ -6,6 +8,8 @@ namespace TaskManagementSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    //[EnableCors("AllowSpecificOrigins")]
+    //[Authorize(Roles= "Admin,RegularUser")]
     public class TaskController : ControllerBase
     {
         private readonly TaskService _taskService;
@@ -36,7 +40,6 @@ namespace TaskManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] TaskDto task)
         {
-            TaskEntity tt = new TaskEntity { Title = "test", Description = "fds", Priority = Models.PriorityLevel.High, Status = Models.TaskStatus.Completed };
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -66,6 +69,7 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        //[Authorize]
         public async Task<IActionResult> GetTasksByUserId(string userId)
         {
             var tasks = await _taskService.GetTasksByUserIdAsync(userId);

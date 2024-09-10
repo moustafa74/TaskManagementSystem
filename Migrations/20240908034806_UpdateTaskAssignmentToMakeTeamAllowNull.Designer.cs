@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskManagementSystem.Api.Data;
 
@@ -11,9 +12,11 @@ using TaskManagementSystem.Api.Data;
 namespace TaskManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240908034806_UpdateTaskAssignmentToMakeTeamAllowNull")]
+    partial class UpdateTaskAssignmentToMakeTeamAllowNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,7 +259,7 @@ namespace TaskManagementSystem.Migrations
 
                     b.HasIndex("UploadedById");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Models.Comment", b =>
@@ -287,7 +290,7 @@ namespace TaskManagementSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Models.TaskAssignment", b =>
@@ -301,13 +304,13 @@ namespace TaskManagementSystem.Migrations
                     b.Property<int?>("TeamId")
                         .HasColumnType("int");
 
-                    b.HasKey("TaskEntityId", "UserId");
+                    b.HasKey("TaskEntityId", "UserId", "TeamId");
 
                     b.HasIndex("TeamId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TaskAssignments", (string)null);
+                    b.ToTable("TaskAssignments");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Models.TaskDependency", b =>
@@ -322,7 +325,7 @@ namespace TaskManagementSystem.Migrations
 
                     b.HasIndex("DependentTaskEntityId");
 
-                    b.ToTable("TaskDependencies", (string)null);
+                    b.ToTable("TaskDependencies");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Models.TaskEntity", b =>
@@ -358,7 +361,7 @@ namespace TaskManagementSystem.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("TaskEntities", (string)null);
+                    b.ToTable("TaskEntities");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Models.Team", b =>
@@ -375,7 +378,7 @@ namespace TaskManagementSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams", (string)null);
+                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("TaskManagementSystem.Models.TeamMember", b =>
@@ -393,7 +396,7 @@ namespace TaskManagementSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TeamMembers", (string)null);
+                    b.ToTable("TeamMembers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

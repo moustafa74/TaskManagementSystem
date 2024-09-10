@@ -1,0 +1,164 @@
+﻿/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding-top: 70px; /* لتجنب تغطية المحتوى بالـ navbar */
+    padding-bottom: 70px; /* لتجنب تغطية المحتوى بالـ footer */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Centered Buttons for Toggle */
+.center-buttons {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+#show-login, #show-register {
+    width: 150px;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    border-radius: 30px;
+    margin: 0 10px;
+    background-color: white !important;
+    color: #007bff !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    #show-login.active, #show-register.active {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+/* Forms */
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#login-form-container, #register-form-container {
+    display: none;
+}
+
+    #login-form-container.active, #register-form-container.active {
+        display: block;
+    }
+
+/* Footer */
+footer {
+    width: 100%;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+    footer a {
+        color: white;
+        margin: 0 10px;
+    }
+
+.success-message {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f0f8ff;
+    border: 1px solid #007bff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .success-message h3 {
+        color: #007bff;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .success-message p {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Adjust container width */
+.container {
+    max-width: 100%;
+}
+
+/* Stack elements vertically on smaller screens */
+@media (max-width: 768px) {
+    .d-flex {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Make buttons full width on smaller screens */
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+        margin: 5px;
+    }
+
+    /* Ensure form containers are properly sized */
+    .form-container {
+        max-width: 90%;
+    }
+
+    /* Stack the action buttons vertically */
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+}
